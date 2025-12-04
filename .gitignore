@@ -64,6 +64,8 @@ credentials.json
 docker-volumes/
 .dockerignore
 kafka-data/
+zookeeper_data/
+zookeeper_log/
 
 # ============================================
 # IDE & Editors
