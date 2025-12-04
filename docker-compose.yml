@@ -1,0 +1,88 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    volumes:
+      - ./zookeeper_data:/var/lib/zookeeper/data
+      - ./zookeeper_log:/var/lib/zookeeper/log
+    networks:
+      - taxi-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - ./kafka_data:/var/lib/kafka/data
+    networks:
+      - taxi-network
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      - kafka
+      - zookeeper
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: taxi-local-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      DYNAMIC_CONFIG_ENABLED: "true"
+    networks:
+      - taxi-network
+
+  producer:
+    build: ./producer
+    depends_on:
+      - kafka
+    volumes:
+      - ./data:/app/data
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      DATA_PATH: /app/data/taxi_data.parquet
+    networks:
+      - taxi-network
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.10.0
+    ports:
+      - "5000:5000"
+    # Comando per avviare il server usando SQLite come database backend
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./mlruns
+    volumes:
+      - ./mlflow_data:/mlflow # Persistenza del DB
+      - ./mlruns:/mlruns # Persistenza dei file (modelli .pkl)
+    networks:
+      - taxi-network
+#
+#  inference:
+#    build: ./inference
+#    depends_on:
+#      - kafka
+#      - mlflow
+#    ports:
+#      - "8000:8000"
+#    environment:
+#      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+#      MLFLOW_TRACKING_URI: http://mlflow:5000
+#    networks:
+#      - taxi-network
+#
+networks:
+  taxi-network:
+    driver: bridge

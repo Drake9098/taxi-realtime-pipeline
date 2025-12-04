@@ -1,0 +1,122 @@
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Raw data
+data/*.csv
+data/*.parquet
+data/*.json
+data/*.txt
+data/**/*.csv
+data/**/*.parquet
+data/**/*.json
+
+# Mantieni solo la struttura
+!data/.gitkeep
+
+# MLflow
+mlruns/
+mlflow_data/
+mlartifacts/
+*.db
+*.db-shm
+*.db-wal
+
+# Model files
+models/*.pkl
+models/*.joblib
+models/*.h5
+models/*.pt
+models/*.pth
+models/*.onnx
+*.pkl
+*.joblib
+
+# ============================================
+# Secrets & Config
+# ============================================
+.env
+.env.local
+.env.*.local
+secrets/
+*.key
+*.pem
+credentials.json
+
+# ============================================
+# Docker
+# ============================================
+# Docker volumes
+docker-volumes/
+.dockerignore
+kafka-data/
+
+# ============================================
+# IDE & Editors
+# ============================================
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+
+# Sublime
+*.sublime-project
+*.sublime-workspace
+
+# ============================================
+# OS Files
+# ============================================
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ============================================
+# Logs & Temp Files
+# ============================================
+*.log
+logs/
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# ============================================
+# Testing & Coverage
+# ============================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ============================================
+# Build & Distribution
+# ============================================
+build/
+dist/
+*.egg-info/
