@@ -16,6 +16,7 @@ A complete **End-to-End MLOps system** that simulates a real-time streaming pipe
 
 The project follows a **Microservices** architecture, orchestrated via Docker Compose.
 
+```
 taxi-realtime-pipeline/
 │
 ├── producer/ # 📡 Service: Sends streaming data to Kafka
@@ -34,6 +35,7 @@ taxi-realtime-pipeline/
 ├── mlruns/ # 📂 Shared volume for MLflow artifacts
 ├── docker-compose.yml # 🐳 Orchestration
 └── README.md
+```
 
 ## 🎯 Technical Choices & Best Practices
 
