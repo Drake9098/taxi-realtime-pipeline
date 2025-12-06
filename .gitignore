@@ -63,7 +63,7 @@ credentials.json
 # Docker volumes
 docker-volumes/
 .dockerignore
-kafka-data/
+kafka_data/
 zookeeper_data/
 zookeeper_log/
 

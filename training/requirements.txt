@@ -1,5 +1,6 @@
-pandas==2.1.4
-scikit-learn==1.4.0
-xgboost==2.0.3
-mlflow==2.10.0
-python-dotenv==1.0.0
+xgboost
+kafka-python
+pandas
+numpy
+scikit-learn
+mlflow==2.18.0

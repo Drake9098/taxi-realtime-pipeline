@@ -59,7 +59,7 @@ services:
       - taxi-network
 
   mlflow:
-    image: ghcr.io/mlflow/mlflow:v2.10.0
+    image: ghcr.io/mlflow/mlflow:v2.18.0
     ports:
       - "5000:5000"
     # Comando per avviare il server usando SQLite come database backend
