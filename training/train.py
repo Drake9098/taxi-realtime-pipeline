@@ -74,7 +74,8 @@ def train_and_log(X, y):
     print("🧠 Training model...")
     
     # MLflow setup
-    mlflow.set_tracking_uri("http://localhost:5000")
+    tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
+    mlflow.set_tracking_uri(tracking_uri)
     mlflow.set_experiment("taxi-demand-prediction")
     
     with mlflow.start_run():
@@ -112,7 +113,7 @@ if __name__ == "__main__":
     print(f"🔧 Creating consumer for topic '{TOPIC}'...")
     consumer = create_consumer([KAFKA_BROKER], TOPIC, GROUP_ID)
 
-    BATCH_SIZE = 1000
+    BATCH_SIZE = 10000
     batch_data = []
     
     print(f"🎧 Awaiting data for group {GROUP_ID} (Batch size: {BATCH_SIZE})...")
