@@ -1,80 +1,95 @@
-# 🚕 Taxi Real-Time Pipeline (MLOps)
+# 🚖 Real-Time Taxi Demand Prediction (End-to-End MLOps)
 
-This is an **end-to-end MLOps project** implementing a real-time streaming pipeline for ML predictions on taxi data.
+A complete **End-to-End MLOps system** that simulates a real-time streaming pipeline to predict the duration of NYC taxi trips. The system continuously learns from new incoming data (**Continuous Training**) and exposes an API for real-time predictions.
 
 ## 📋 Project Status
 
-🚧 **Current Status:** Phase 1 Complete (Data Ingestion & Infrastructure)
+🟢 **Status:** Completed
 
-- [x] Kafka Infrastructure Setup
-- [x] Data Ingestion Producer (Python + Docker)
-- [x] Model Training Service (In Progress)
-- [ ] Inference API (Planned)
+- [x] **Data Ingestion:** Scalable Kafka Producer (Python + Docker).
+- [x] **Streaming Infrastructure:** Apache Kafka & Zookeeper.
+- [x] **Continuous Training:** Consumer that trains Random Forest models on-the-fly.
+- [x] **Model Registry:** Experiment tracking and artifact versioning with MLflow.
+- [x] **Inference API:** FastAPI microservice with "Lazy Loading" pattern to serve the latest available model.
 
-## 🏗️ Repository Structure
+## 🏗️ Monorepo Architecture
 
-```
+The project follows a **Microservices** architecture, orchestrated via Docker Compose.
+
 taxi-realtime-pipeline/
 │
-├── producer/                  # 📡 Kafka Producer Service
-│   ├── app.py                # Script to send data to Kafka
-│   ├── requirements.txt      # Python dependencies
-│   └── Dockerfile            # Producer container
+├── producer/ # 📡 Service: Sends streaming data to Kafka
+│ ├── app.py
+│ └── Dockerfile
 │
-├── training/                  # 🎓 ML Training Service (🚧 Work in Progress)
-│   ├── train.py              # Model training script
-│   ├── feature_engineering.py # Feature engineering pipeline
-│   ├── requirements.txt      # Training dependencies
-│   └── Dockerfile            # Training container
+├── training/ # 🎓 Service: Consumes data & trains models
+│ ├── train.py # Training logic & MLflow logging
+│ └── Dockerfile
 │
-├── inference/                 # 🚀 API Service (🚧 Work in Progress)
-│   ├── main.py               # FastAPI app for model serving
-│   ├── requirements.txt      # Inference dependencies
-│   └── Dockerfile            # API container
+├── inference/ # 🚀 Service: Exposes REST API for predictions
+│ ├── main.py # FastAPI app with auto-reload model logic
+│ └── Dockerfile
 │
-├── data/                      # 💾 Local data (Excluded from Git)
-│   └── .gitkeep              # Keeps folder in repo
-│
-├── docker-compose.yml         # 🐳 Complete orchestration
-├── .gitignore                 # 🛡️ Protection from unwanted commits
-└── README.md                  # 📖 Documentation
-```
+├── data/ # 💾 Local data (Excluded from Git)
+├── mlruns/ # 📂 Shared volume for MLflow artifacts
+├── docker-compose.yml # 🐳 Orchestration
+└── README.md
 
-## 🎯 Architecture Rationale
+## 🎯 Technical Choices & Best Practices
 
-**Separation of Concerns:**
-Each service (producer, training, inference) is completely isolated with separate dependencies, Dockerfile, and runtime. This enables independent deployments, horizontal scalability, and isolated testing.
+Microservices Isolation: Each component runs in its own isolated Python environment (venv/Dockerfile) to avoid dependency conflicts.
 
-**Reproducibility:**
-Docker ensures consistent environments across different machines and stages (dev, staging, production).
+Event-Driven: Decoupling between data production and model training via Kafka.
 
-## 🚀 Quick Start
+Data Robustness: Explicit type handling (Float64) and Schema Enforcement via MLflow Signatures.
 
-### 1. Prerequisites
+API Resilience: Implementation of the Lazy Loading pattern in the Inference API to handle cold starts or temporary model unavailability gracefully.
 
-- **Docker** installed
-- **Dataset**: Download one of the "Yellow Taxi Trip Records" (Parquet format) from the [official NYC TLC website](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
-  - Rename the file to `taxi_data.parquet`
-  - Place it in the `data/` folder
+##🚀 Quick Start
 
-### 2. Launch
+1. Prerequisites
+   Docker and Docker Compose installed.
 
-```bash
-# Start the entire infrastructure
+Dataset: Download one of the "Yellow Taxi Trip Records" files (Parquet format) from the official NYC TLC website, rename it to taxi_data.parquet, and place it in the data/ folder.
+
+2. Launch
+   Start the entire infrastructure with a single command:
+
 docker-compose up -d --build
-```
+Wait approximately 60-90 seconds for the Training Service to collect the first batch of data (default: 10,000 records) and generate the initial model.
 
-### 3. Access Services
+3. Dashboards & Monitoring
+   Kafka UI: http://localhost:8080 (Stream monitoring)
 
-- **Kafka UI**: [http://localhost:8080](http://localhost:8080) (Monitor data streaming)
-- **MLflow UI**: [http://localhost:5000](http://localhost:5000) (Track experiments - Coming Soon)
-- **Inference API**: [http://localhost:8000/docs](http://localhost:8000/docs) (Model predictions - Planned)
+MLflow UI: http://localhost:5000 (MAE metrics & Models visualization)
 
-## 🛠️ Tech Stack
+API Documentation: http://localhost:8000/docs (Swagger UI)
 
-- **Streaming:** Apache Kafka + Zookeeper
-- **Infrastructure:** Docker + Docker Compose
-- **Language:** Python 3.9
-- **Libraries:** kafka-python, pandas, (Planned: scikit-learn, MLflow, FastAPI)
+4. Test Prediction (Inference)
+   You can test the API directly via Swagger UI or using curl in your terminal:
 
----
+JSON Request Example (JFK Airport -> Times Square):
+
+{
+"PULocationID": 132,
+"DOLocationID": 230,
+"trip_distance": 18.5
+}
+
+Expected Response:
+
+{
+"predicted_duration_minutes": 51.64, (approximate value)
+"ride_details": { ... }
+}
+
+🛠️ Tech Stack
+Streaming: Apache Kafka, Zookeeper
+
+ML & Data: Scikit-Learn, Pandas, MLflow
+
+Backend: FastAPI, Uvicorn, Pydantic
+
+Containerization: Docker, Docker Compose
+
+Language: Python 3.11
