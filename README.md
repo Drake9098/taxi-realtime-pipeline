@@ -8,7 +8,7 @@ This is an **end-to-end MLOps project** implementing a real-time streaming pipel
 
 - [x] Kafka Infrastructure Setup
 - [x] Data Ingestion Producer (Python + Docker)
-- [ ] Model Training Service (In Progress)
+- [x] Model Training Service (In Progress)
 - [ ] Inference API (Planned)
 
 ## 🏗️ Repository Structure
@@ -16,7 +16,7 @@ This is an **end-to-end MLOps project** implementing a real-time streaming pipel
 ```
 taxi-realtime-pipeline/
 │
-├── producer/                  # 📡 Kafka Producer Service (✅ Completed)
+├── producer/                  # 📡 Kafka Producer Service
 │   ├── app.py                # Script to send data to Kafka
 │   ├── requirements.txt      # Python dependencies
 │   └── Dockerfile            # Producer container
@@ -27,7 +27,7 @@ taxi-realtime-pipeline/
 │   ├── requirements.txt      # Training dependencies
 │   └── Dockerfile            # Training container
 │
-├── inference/                 # 🚀 API Service (📅 Planned)
+├── inference/                 # 🚀 API Service (🚧 Work in Progress)
 │   ├── main.py               # FastAPI app for model serving
 │   ├── requirements.txt      # Inference dependencies
 │   └── Dockerfile            # API container
