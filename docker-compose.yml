@@ -58,31 +58,50 @@ services:
     networks:
       - taxi-network
 
+  training:
+    build: ./training
+    container_name: taxi-training-consumer
+    depends_on:
+      - kafka
+      - mlflow
+    volumes:
+      - ./training:/app
+      - ./mlruns:/mlruns
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      PYTHONUNBUFFERED: 1
+      GIT_PYTHON_REFRESH: quiet
+    command: python -u train.py
+    networks:
+      - taxi-network
+
   mlflow:
     image: ghcr.io/mlflow/mlflow:v2.18.0
     ports:
       - "5000:5000"
-    # Comando per avviare il server usando SQLite come database backend
     command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./mlruns
     volumes:
-      - ./mlflow_data:/mlflow # Persistenza del DB
-      - ./mlruns:/mlruns # Persistenza dei file (modelli .pkl)
+      - ./mlflow_data:/mlflow
+      - ./mlruns:/mlruns
     networks:
       - taxi-network
-#
-#  inference:
-#    build: ./inference
-#    depends_on:
-#      - kafka
-#      - mlflow
-#    ports:
-#      - "8000:8000"
-#    environment:
-#      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-#      MLFLOW_TRACKING_URI: http://mlflow:5000
-#    networks:
-#      - taxi-network
-#
+
+  inference:
+    build: ./inference
+    depends_on:
+      - kafka
+      - mlflow
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./mlruns:/mlruns:ro
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    networks:
+      - taxi-network
+
 networks:
   taxi-network:
     driver: bridge
