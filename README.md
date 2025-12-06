@@ -47,7 +47,7 @@ Data Robustness: Explicit type handling (Float64) and Schema Enforcement via MLf
 
 API Resilience: Implementation of the Lazy Loading pattern in the Inference API to handle cold starts or temporary model unavailability gracefully.
 
-##🚀 Quick Start
+## 🚀 Quick Start
 
 1. Prerequisites
    Docker and Docker Compose installed.
@@ -85,7 +85,8 @@ Expected Response:
 "ride_details": { ... }
 }
 
-🛠️ Tech Stack
+## 🛠️ Tech Stack
+
 Streaming: Apache Kafka, Zookeeper
 
 ML & Data: Scikit-Learn, Pandas, MLflow
