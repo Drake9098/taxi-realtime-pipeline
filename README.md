@@ -49,50 +49,72 @@ API Resilience: Implementation of the Lazy Loading pattern in the Inference API 
 
 ## 🚀 Quick Start
 
-1. Prerequisites
-   Docker and Docker Compose installed.
+### Prerequisites
+
+Docker and Docker Compose installed.
 
 Dataset: Download one of the "Yellow Taxi Trip Records" files (Parquet format) from the official NYC TLC website, rename it to taxi_data.parquet, and place it in the data/ folder.
 
-2. Launch
-   Start the entire infrastructure with a single command:
+### Launch
 
+Start the entire infrastructure with a single command:
+
+```
 docker-compose up -d --build
+```
+
+This command will build and start the following services:
+
+- Zookeeper
+- Kafka Broker
+- Kafka UI (for monitoring streams)
+- Data Producer (sends taxi trip data to Kafka)
+- Training Service (consumes data, trains models, logs to MLflow)
+- Inference API (serves predictions via FastAPI)
+- MLflow Tracking Server (for experiment tracking and model registry)
+- MLflow UI (for visualizing experiments and models)
+
 Wait approximately 60-90 seconds for the Training Service to collect the first batch of data (default: 10,000 records) and generate the initial model.
 
-3. Dashboards & Monitoring
-   Kafka UI: http://localhost:8080 (Stream monitoring)
+### Dashboards & Monitoring
+
+Kafka UI: http://localhost:8080 (Stream monitoring)
 
 MLflow UI: http://localhost:5000 (MAE metrics & Models visualization)
 
 API Documentation: http://localhost:8000/docs (Swagger UI)
 
-4. Test Prediction (Inference)
-   You can test the API directly via Swagger UI or using curl in your terminal:
+### Test Prediction (Inference)
+
+You can test the API directly via Swagger UI or using curl in your terminal:
 
 JSON Request Example (JFK Airport -> Times Square):
 
+```
 {
 "PULocationID": 132,
 "DOLocationID": 230,
 "trip_distance": 18.5
 }
+```
 
 Expected Response:
 
+```
 {
 "predicted_duration_minutes": 51.64, (approximate value)
 "ride_details": { ... }
 }
+```
 
 ## 🛠️ Tech Stack
 
-Streaming: Apache Kafka, Zookeeper
+**Streaming**: Apache Kafka, Zookeeper
 
-ML & Data: Scikit-Learn, Pandas, MLflow
+**ML & Data**: Scikit-Learn, Pandas, MLflow
 
-Backend: FastAPI, Uvicorn, Pydantic
+**Backend**: FastAPI, Uvicorn, Pydantic
 
-Containerization: Docker, Docker Compose
+**Containerization**: Docker, Docker Compose
 
-Language: Python 3.11
+**Language**: Python 3.11
