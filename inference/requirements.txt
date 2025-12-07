@@ -4,3 +4,4 @@ python-multipart==0.0.20
 pandas==2.3.3
 scikit-learn==1.7.2
 mlflow==2.18.0
+asyncio==4.0.0
